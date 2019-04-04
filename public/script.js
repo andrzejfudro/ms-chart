@@ -11,15 +11,23 @@ getRequest('/schema.json').then(response => {
 			global.openDoc(ENVIRONMENT.qlikApp).then(app => {
 				// TABLE
 				const def = {
-                    qInfo: {
-                        qType: 'ref-list'
-                    },
-                    qListObjectDef: {
-                        qDef: { qFieldDefs: ['Origin Country'] },
-                        qInitialDataFetch: [
-                            { qTop: 0, qLeft: 0, qWidth: 1, qHeight: 10 }
-                        ]
-                    }
+					qInfo: {
+						qType: 'ref-list'
+					},
+					originCountry: {
+						qListObjectDef: {
+							qDef: { qFieldDefs: ['Origin Country'] },
+							qInitialDataFetch: [
+								{ qTop: 0, qLeft: 0, qWidth: 1, qHeight: 100 }
+							]
+						}
+					},
+					selections: {
+						qInfo: {
+							qType: 'origin-country-selections'
+						},
+						qSelectionObjectDef: {}
+					}
 				}
                 app.createSessionObject(def).then(model => {
                     _model = model
@@ -32,16 +40,25 @@ getRequest('/schema.json').then(response => {
 						<table class=origin-country-table>
 						<tr>
 							<th>
-								${layout.qListObject.qDimensionInfo.qFallbackTitle}
+								${layout.originCountry.qListObject.qDimensionInfo.qFallbackTitle}
 							</th>
 						</tr>
-							${layout.qListObject.qDataPages[0].qMatrix.map(row => 
+							${layout.originCountry.qListObject.qDataPages[0].qMatrix.map(row => 
 								`<tr>${row.map((cell) => 
 									`<td class="state-${cell.qState}" onclick="selectOriginCountry(${cell.qElemNumber})">${cell.qText}</td>`).join('')}
 								 </tr>`).join('')}
 						</table>
 					`		
 						document.getElementById('table_container').innerHTML = html
+						
+						html = '';
+						layout.selections.qSelectionObject.qSelections.forEach(s => {
+							html += `
+								<h6>${s.qSelected}</h6>
+							`
+						})
+						document.getElementById('selections-container').innerHTML = html
+
                     })
                 }
 			})
@@ -50,7 +67,7 @@ getRequest('/schema.json').then(response => {
 })
 
 function selectOriginCountry (elemNum) {
-	_model.selectListObjectValues('/qListObjectDef', [elemNum], true)
+	_model.selectListObjectValues('/originCountry/qListObjectDef', [elemNum], true)
 }
 
 function getRequest (url) {

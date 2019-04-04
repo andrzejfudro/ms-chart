@@ -20,8 +20,16 @@
     width: 200px;
 }
 
+#table-container {
+    height:100px;
+    overflow:"auto";
+}
 
+#selections-container {
+    width: 200px;
+    height: 62.8px;
+}
 
 table, th, td {
     border: 1px solid black;
-  }
+}
