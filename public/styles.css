@@ -1,6 +1,52 @@
+.table-row {
+    margin-bottom: 1px;
+    font-size: 18px;
+    color: white;
+    padding: 2px;
+}
+
+.state-O {
+    background-color: rgb(92, 91, 91);
+}
+
+.state-X {
+    background-color: grey;
+}
+
+.state-S {
+    background-color: black;
+    color: white;
+}
+
+.table-container {
+    border-right: 1px solid gray;
+    width: 250px;
+    height: 100vh;
+}
+
+.table-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffab00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+}
+
+.table-content {
+    height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+table, td {
+    border: 1px solid black;
+}
+
 body {
     margin: 0;
     overflow: hidden;
+    display: flex;
 }
 
 /* Style the lines by removing the fill and applying a stroke */

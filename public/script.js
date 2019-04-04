@@ -10,9 +10,24 @@ getRequest('/schema.json').then(response => {
 		});
 		session.open().then(global => {
 			global.openDoc(ENVIRONMENT.qlikApp).then(app => {
-				const def3 = {
-					qInfo: {
-						qType: 'ms-chart',
+				// TABLE
+				const def = {
+                    qInfo: {
+                        qType: 'ref-list'
+                    },
+					originCountry: {
+						qListObjectDef: {
+							qDef: { qFieldDefs: ['Origin Country'] },
+							qInitialDataFetch: [
+								{ qTop: 0, qLeft: 0, qWidth: 1, qHeight: 100 }
+							]
+						}
+					},
+					selections: {
+						qInfo: {
+							qType: 'origin-country-selections'
+						},
+						qSelectionObjectDef: {}
 					},
 					qHyperCubeDef: {
 						qDimensions: [
@@ -26,17 +41,59 @@ getRequest('/schema.json').then(response => {
 						],
 					},
 				};
-
-				app.createSessionObject(def3).then(model => {
+                app.createSessionObject(def).then(model => {
+                    _model = model;
+                    renderList();
+					renderLinechart();
+                    model.addListener('changed', onChange);
 					model.getLayout().then(layout => {
 						_data = layout.qHyperCube.qDataPages[0].qMatrix;
 						renderLinechart();
 					});
-				});
-			});
-		});
-	});
+                })
+			})
+		})
+	})
 });
+
+function onChange() {
+	renderList();
+	removeLinechart();
+	renderLinechart();
+}
+
+function renderList() {
+	_model.getLayout().then(layout => {
+		let html = `
+			<div class="table-container">
+				<div class="table-title">
+					${layout.originCountry.qListObject.qDimensionInfo.qFallbackTitle}
+				</div>
+				<div class="table-content">
+				${layout.originCountry.qListObject.qDataPages[0].qMatrix.map((row) =>
+				`${row.map((cell) =>
+					`<div class="table-row state-${cell.qState}" onclick="selectOriginCountry(${cell.qElemNumber})">${cell.qText}</div>`).join('')}
+			 	`).join('')}
+				</div>
+			</div>
+		`;
+		document.getElementById('table-container').innerHTML = html;
+
+		html = '';
+		layout.selections.qSelectionObject.qSelections.forEach(s => {
+			html += `
+								<h6>${s.qSelected}</h6>
+							`
+		})
+		document.getElementById('selections-container').innerHTML = html
+
+		_data = layout.qHyperCube.qDataPages[0].qMatrix;
+	});
+}
+
+function selectOriginCountry (elemNum) {
+	_model.selectListObjectValues('/originCountry/qListObjectDef', [elemNum], true)
+}
 
 function getRequest (url) {
 	return new Promise((resolve) => {
@@ -61,7 +118,7 @@ function renderLinechart() {
 	data.splice(-1,1);
 
 	const margin = { top: 50, right: 50, bottom: 50, left: 100 };
-	const width = window.innerWidth - margin.left - margin.right;
+	const width = window.innerWidth - margin.left - margin.right - 250;
 	const height = window.innerHeight - margin.top - margin.bottom;
 
 	// Year
@@ -115,8 +172,6 @@ function renderLinechart() {
 function removeLinechart() {
 	d3.select("body").select("svg").select('.main-group').remove();
 }
-
-renderLinechart();
 
 function onResize() {
 	removeLinechart();

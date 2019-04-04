@@ -1,4 +1,4 @@
 {
-	"qlikUrl": "ws://localhost:4848/app/",
-	"qlikApp": "Refugee Crisis 2018.qvf"
+    "qlikUrl": "ws://localhost:4848/app/",
+    "qlikApp": "Refugee Crisis 2018.qvf"
 }
