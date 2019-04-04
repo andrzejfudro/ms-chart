@@ -1,7 +1,27 @@
 .state-O {
-    color: blue;
+    background-color: rgb(92, 91, 91);
 }
 
 .state-X {
-    color: red;
+    background-color: grey;
 }
+
+.state-S {
+    background-color: black;
+}
+
+.state-S {
+    background-color: black;
+    color: white;
+}
+
+.origin-country-table {
+    border: 1px solid black;
+    width: 200px;
+}
+
+
+
+table, th, td {
+    border: 1px solid black;
+  }

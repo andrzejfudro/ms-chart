@@ -21,7 +21,6 @@ getRequest('/schema.json').then(response => {
                         ]
                     }
 				}
-
                 app.createSessionObject(def).then(model => {
                     _model = model
                     renderList(_model)
@@ -29,20 +28,22 @@ getRequest('/schema.json').then(response => {
                 })
                 function renderList (model) {
                     model.getLayout().then(layout => {
-						let html = `<h5>${layout.qListObject.qDimensionInfo.qFallbackTitle}</h5>`;
-						console.log('|||||||');
-                        layout.qListObject.qDataPages[0].qMatrix.forEach(item => {
-							console.log(item[0].qState);
-                            html += `
-                                <div class="state-${item[0].qState}" onclick=selectOriginCountry(${item[0].qElemNumber})>
-                                    ${item[0].qText}
-                                </div>
-                            `
-						})
+						let html = `
+						<table class=origin-country-table>
+						<tr>
+							<th>
+								${layout.qListObject.qDimensionInfo.qFallbackTitle}
+							</th>
+						</tr>
+							${layout.qListObject.qDataPages[0].qMatrix.map(row => 
+								`<tr>${row.map((cell) => 
+									`<td class="state-${cell.qState}" onclick="selectOriginCountry(${cell.qElemNumber})">${cell.qText}</td>`).join('')}
+								 </tr>`).join('')}
+						</table>
+					`		
 						document.getElementById('table_container').innerHTML = html
                     })
                 }
-				// 
 			})
 		})
 	})
