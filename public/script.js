@@ -15,12 +15,20 @@ getRequest('/schema.json').then(response => {
                     qInfo: {
                         qType: 'ref-list'
                     },
-                    qListObjectDef: {
-                        qDef: { qFieldDefs: ['Origin Country'] },
-                        qInitialDataFetch: [
-                            { qTop: 35, qLeft: 0, qWidth: 1, qHeight: 100 }
-                        ]
-                    },
+					originCountry: {
+						qListObjectDef: {
+							qDef: { qFieldDefs: ['Origin Country'] },
+							qInitialDataFetch: [
+								{ qTop: 0, qLeft: 0, qWidth: 1, qHeight: 100 }
+							]
+						}
+					},
+					selections: {
+						qInfo: {
+							qType: 'origin-country-selections'
+						},
+						qSelectionObjectDef: {}
+					},
 					qHyperCubeDef: {
 						qDimensions: [
 							{ qDef: { qFieldDefs: ['Year'] } },
@@ -59,10 +67,10 @@ function renderList() {
 		let html = `
 			<div class="table-container">
 				<div class="table-title">
-					${layout.qListObject.qDimensionInfo.qFallbackTitle}
+					${layout.originCountry.qListObject.qDimensionInfo.qFallbackTitle}
 				</div>
 				<div class="table-content">
-				${layout.qListObject.qDataPages[0].qMatrix.map((row) =>
+				${layout.originCountry.qListObject.qDataPages[0].qMatrix.map((row) =>
 				`${row.map((cell) =>
 					`<div class="table-row state-${cell.qState}" onclick="selectOriginCountry(${cell.qElemNumber})">${cell.qText}</div>`).join('')}
 			 	`).join('')}
@@ -70,13 +78,21 @@ function renderList() {
 			</div>
 		`;
 		document.getElementById('table-container').innerHTML = html;
+
+		html = '';
+		layout.selections.qSelectionObject.qSelections.forEach(s => {
+			html += `
+								<h6>${s.qSelected}</h6>
+							`
+		})
+		document.getElementById('selections-container').innerHTML = html
+
 		_data = layout.qHyperCube.qDataPages[0].qMatrix;
-		console.log(layout);
 	});
 }
 
 function selectOriginCountry (elemNum) {
-	_model.selectListObjectValues('/qListObjectDef', [elemNum], true)
+	_model.selectListObjectValues('/originCountry/qListObjectDef', [elemNum], true)
 }
 
 function getRequest (url) {
