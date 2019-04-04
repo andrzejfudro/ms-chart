@@ -43,13 +43,12 @@ getRequest('/schema.json').then(response => {
 				};
                 app.createSessionObject(def).then(model => {
                     _model = model;
-                    renderList();
-					renderLinechart();
-                    model.addListener('changed', onChange);
 					model.getLayout().then(layout => {
 						_data = layout.qHyperCube.qDataPages[0].qMatrix;
+						renderList(layout);
 						renderLinechart();
 					});
+                    model.addListener('changed', onChange);
                 })
 			})
 		})
@@ -57,38 +56,37 @@ getRequest('/schema.json').then(response => {
 });
 
 function onChange() {
-	renderList();
-	removeLinechart();
-	renderLinechart();
+	_model.getLayout().then(layout => {
+		_data = layout.qHyperCube.qDataPages[0].qMatrix;
+		renderList(layout);
+		removeLinechart();
+		renderLinechart();
+	});
 }
 
-function renderList() {
-	_model.getLayout().then(layout => {
-		let html = `
-			<div class="table-container">
-				<div class="table-title">
-					${layout.originCountry.qListObject.qDimensionInfo.qFallbackTitle}
-				</div>
-				<div class="table-content">
-				${layout.originCountry.qListObject.qDataPages[0].qMatrix.map((row) =>
-				`${row.map((cell) =>
-					`<div class="table-row state-${cell.qState}" onclick="selectOriginCountry(${cell.qElemNumber})">${cell.qText}</div>`).join('')}
-			 	`).join('')}
-				</div>
+function renderList(layout) {
+	let html = `
+		<div class="table-container">
+			<div class="table-title">
+				${layout.originCountry.qListObject.qDimensionInfo.qFallbackTitle}
 			</div>
-		`;
-		document.getElementById('table-container').innerHTML = html;
+			<div class="table-content">
+			${layout.originCountry.qListObject.qDataPages[0].qMatrix.map((row) =>
+			`${row.map((cell) =>
+				`<div class="table-row state-${cell.qState}" onclick="selectOriginCountry(${cell.qElemNumber})">${cell.qText}</div>`).join('')}
+			`).join('')}
+			</div>
+		</div>
+	`;
+	document.getElementById('table-container').innerHTML = html;
 
-		html = '';
-		layout.selections.qSelectionObject.qSelections.forEach(s => {
-			html += `
-								<h6>${s.qSelected}</h6>
-							`
-		})
-		document.getElementById('selections-container').innerHTML = html
-
-		_data = layout.qHyperCube.qDataPages[0].qMatrix;
-	});
+	html = '';
+	layout.selections.qSelectionObject.qSelections.forEach(s => {
+		html += `
+							<span>${s.qSelected}</span>
+						`
+	})
+	document.getElementById('selections-container').innerHTML = html;
 }
 
 function selectOriginCountry (elemNum) {

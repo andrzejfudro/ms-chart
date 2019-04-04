@@ -14,14 +14,25 @@
 }
 
 .state-S {
-    background-color: black;
+    background-color: #ffab00;
     color: white;
 }
 
-.table-container {
+#table-container {
     border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
     width: 250px;
-    height: 100vh;
+    height: 90vh;
+}
+
+#selections-container {
+    width: 250px;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid gray;
+    color: gray;
 }
 
 .table-title {
@@ -31,11 +42,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
+    height: 10vh;
 }
 
 .table-content {
-    height: calc(100vh - 40px);
+    height: calc(90vh - 10vh);
     overflow-y: auto;
 }
 
